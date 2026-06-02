@@ -1,73 +1,49 @@
-# React + TypeScript + Vite
+# Automated CI/CD Pipeline for React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 1. Project Overview
+This project demonstrates the implementation of a robust **Continuous Integration and Continuous Deployment (CI/CD)** pipeline for a React application. By leveraging Jenkins and Docker, I automated the build, testing, and deployment lifecycle, ensuring that code changes are delivered to the environment seamlessly.
 
-Currently, two official plugins are available:
+## 2. Why I chose this project
+I chose this project to bridge the gap between "writing code" and "delivering software." Building a React application is only half the battle; the real challenge is automating the deployment process. This project showcases my proficiency in:
+* **DevOps Engineering:** Automating repetitive infrastructure tasks.
+* **Infrastructure as Code (IaC):** Managing environments using `Dockerfile` and `Jenkinsfile`.
+* **Containerization:** Using Docker to ensure application consistency across environments.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 3. Architecture
+The project follows a modern automated deployment flow:
+* **Source:** GitHub (Version Control)
+* **Automation:** Jenkins (CI/CD Server)
+* **Runtime:** Docker (Containerized Infrastructure)
+* **Workflow:** `git push` → Jenkins Automated Build → Docker Image Creation → Automated Deployment.
 
-## React Compiler
+## 4. How I built it from scratch
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Step 1: Containerizing the Application
+I utilized a **Multi-Stage Docker Build**. 
+* **Stage 1 (Build):** Compiles the React source code into static assets.
+* **Stage 2 (Serve):** Uses a lightweight Alpine image to serve the application, ensuring the final image is secure and optimized for production.
 
-## Expanding the ESLint configuration
+### Step 2: Configuring the CI/CD Pipeline
+I implemented a `Jenkinsfile` (Pipeline-as-Code) to define the automation logic:
+1. **Checkout:** Automatically pulls the latest code from the GitHub repository.
+2. **Build:** Executes a Docker build to package the new code.
+3. **Deploy:** Automatically stops the previous version of the app and spins up the new containerized version.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Step 3: Bridging Docker & Jenkins
+I enabled "Docker-outside-of-Docker" by mounting the host's Docker socket (`/var/run/docker.sock`) into the Jenkins container. This allows Jenkins to orchestrate Docker containers on the host machine.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 5. Visual Documentation
+*(Include your screenshots here in the following format)*
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+* **Pipeline Dashboard:** ![Alt text](link-to-your-screenshot-1)
+* **Build Logs:** ![Alt text](link-to-your-screenshot-2)
+* **Live App Update:** ![Alt text](link-to-your-screenshot-3)
+* **Architecture Diagram:** ![Alt text](link-to-your-screenshot-4)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 6. How to run this app
+To replicate this CI/CD pipeline, follow these steps:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. **Clone the Repository:**
+   ```bash
+   git clone [https://github.com/pitalsmith/react-app-pipeline.git](https://github.com/pitalsmith/react-app-pipeline.git)
+   cd react-app-pipeline
