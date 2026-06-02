@@ -35,7 +35,7 @@ I enabled "Docker-outside-of-Docker" by mounting the host's Docker socket (`/var
 ## 5. Visual Documentation
 *(Include your screenshots here in the following format)*
 
-* **Pipeline Dashboard:** ![Alt text](link-to-your-screenshot-1)
+* **Pipeline Dashboard:** ![Pipeline Dashboard](src/assets/P1.jpg)
 * **Build Logs:** ![Alt text](link-to-your-screenshot-2)
 * **Live App Update:** ![Alt text](link-to-your-screenshot-3)
 * **Architecture Diagram:** ![Alt text](link-to-your-screenshot-4)
