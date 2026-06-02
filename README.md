@@ -49,10 +49,69 @@ Side-by-side verification: On the left, my App.tsx code change; on the right, th
 The data flow diagram: A git push triggers the Jenkins pipeline, which orchestrates the Docker build on the host machine, resulting in a live, containerized web application at localhost:8081.
 * **Architecture Diagram:** ![Pipeline Dashboard](src/assets/P4.JPG)
 
+---
+
 ## 6. How to run this app
 To replicate this CI/CD pipeline, follow these steps:
 
-1. **Clone the Repository:**
+ **Clone the Repository:**
    ```bash
    git clone [https://github.com/pitalsmith/react-app-pipeline.git](https://github.com/pitalsmith/react-app-pipeline.git)
    cd react-app-pipeline
+---
+
+## Deployment & CI/CD Workflow
+
+This project is built on an automated CI/CD pipeline using **Jenkins** and **Docker**. By mounting the Docker socket, Jenkins can orchestrate containers on the host machine, creating a seamless "Build-Deploy" cycle.
+
+### Prerequisites
+
+* **Docker Desktop** installed and running on your machine.
+* A basic understanding of the command line.
+
+### Step 1: Launch the Jenkins CI/CD Server
+
+To ensure Jenkins has the necessary permissions to control Docker, launch the container with the Docker socket mounted:
+
+```bash
+docker run -d -p 8080:8080 -p 50000:50000 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  --name jenkins --dns 8.8.8.8 jenkins/jenkins:lts
+
+```
+
+* **Note:** The `-v /var/run/docker.sock:/var/run/docker.sock` flag is critical—it allows the Jenkins container to command the host’s Docker engine to spin up your application.
+
+### Step 2: Configure the Pipeline in Jenkins
+
+1. **Initial Setup:** Access your Jenkins dashboard at `http://localhost:8080`.
+2. **Retrieve Admin Password:** If prompted, run this command in your terminal:
+```bash
+docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+
+```
+
+
+3. **Create New Pipeline:** * Go to **New Item** > **Pipeline** > Name it `React-Pipeline`.
+4. **Link to Repository:** * In the Pipeline configuration, set **Definition** to **"Pipeline script from SCM"**.
+* Set SCM to **Git** and provide your repository URL: `https://github.com/pitalsmith/react-app-pipeline.git`.
+* Ensure the branch is set to `*/main`.
+
+
+
+### Step 3: The CI/CD Loop in Action
+
+Once the pipeline is configured, the system is fully automated. You simply follow this developer workflow:
+
+1. **Develop:** Modify your code (e.g., updating `src/App.tsx`).
+2. **Push:** Commit and push your changes to GitHub:
+```bash
+git add .
+git commit -m "Update application UI"
+git push origin main
+
+```
+
+
+3. **Automate:** Jenkins automatically detects the push, triggers the `Jenkinsfile`, builds a fresh Docker image with your new code, and redeploys the container to `http://localhost:8081`.
+
