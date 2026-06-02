@@ -33,12 +33,21 @@ I implemented a `Jenkinsfile` (Pipeline-as-Code) to define the automation logic:
 I enabled "Docker-outside-of-Docker" by mounting the host's Docker socket (`/var/run/docker.sock`) into the Jenkins container. This allows Jenkins to orchestrate Docker containers on the host machine.
 
 ## 5. Visual Documentation
-*(Include your screenshots here in the following format)*
+Figure 1: Jenkins CI/CD Pipeline Dashboard.
+This view monitors the health of my deployment lifecycle. The green checkmarks confirm that the automation is stable, repeatable, and successfully handling multiple code deployments.
+* **Pipeline Dashboard:** ![Pipeline Dashboard](src/assets/P1.JPG)
 
-* **Pipeline Dashboard:** ![Pipeline Dashboard](src/assets/P1.jpg)
-* **Build Logs:** ![Alt text](link-to-your-screenshot-2)
-* **Live App Update:** ![Alt text](link-to-your-screenshot-3)
-* **Architecture Diagram:** ![Alt text](link-to-your-screenshot-4)
+* Figure 2: Automated Deployment Logs.
+Captured during a build. I’ve highlighted the Finished: SUCCESS status, which confirms that my multi-stage Docker build, container cleanup, and deployment steps executed successfully without manual intervention.
+* **Build Logs:** ![Pipeline Dashboard](src/assets/P2.JPG)
+
+* Figure 3: Action vs. Result.
+Side-by-side verification: On the left, my App.tsx code change; on the right, the application reflecting that change live in the browser immediately after the CI/CD pipeline triggered.
+* **Live App Update:** ![Pipeline Dashboard](src/assets/P3.JPG)
+
+* Figure 4: System Architecture.
+The data flow diagram: A git push triggers the Jenkins pipeline, which orchestrates the Docker build on the host machine, resulting in a live, containerized web application at localhost:8081.
+* **Architecture Diagram:** ![Pipeline Dashboard](src/assets/P4.JPG)
 
 ## 6. How to run this app
 To replicate this CI/CD pipeline, follow these steps:
