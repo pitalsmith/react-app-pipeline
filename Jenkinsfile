@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        // This special DNS name forces Jenkins to look outside itself and hit your local machine directly
-        LOCALSTACK_ENDPOINT   = 'http://localstack-main:4566'
+        // Direct internal gateway routing bypassing DNS completely
+        LOCALSTACK_ENDPOINT   = 'http://172.22.0.1:4566'
         BUCKET_NAME           = 'react-app-bucket'
     }
 
