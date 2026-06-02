@@ -35,15 +35,15 @@ I enabled "Docker-outside-of-Docker" by mounting the host's Docker socket (`/var
 ## 5. Visual Documentation
 Figure 1: Jenkins CI/CD Pipeline Dashboard.
 This view monitors the health of my deployment lifecycle. The green checkmarks confirm that the automation is stable, repeatable, and successfully handling multiple code deployments.
-* **Pipeline Dashboard:** ![Pipeline Dashboard](src/assets/P1.JPG)
+* **Pipeline Dashboard:** ![Pipeline Dashboard](src/assets/P1.jpg)
 
 * Figure 2: Automated Deployment Logs.
 Captured during a build. I’ve highlighted the Finished: SUCCESS status, which confirms that my multi-stage Docker build, container cleanup, and deployment steps executed successfully without manual intervention.
-* **Build Logs:** ![Pipeline Dashboard](src/assets/P2.JPG)
+* **Build Logs:** ![Pipeline Dashboard](src/assets/P2.jpg)
 
 * Figure 3: Action vs. Result.
 Side-by-side verification: On the left, my App.tsx code change; on the right, the application reflecting that change live in the browser immediately after the CI/CD pipeline triggered.
-* **Live App Update:** ![Pipeline Dashboard](src/assets/P3.JPG)
+* **Live App Update:** ![Pipeline Dashboard](src/assets/P3.jpg)
 
 * Figure 4: System Architecture.
 The data flow diagram: A git push triggers the Jenkins pipeline, which orchestrates the Docker build on the host machine, resulting in a live, containerized web application at localhost:8081.
