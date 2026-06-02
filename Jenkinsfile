@@ -1,43 +1,27 @@
 pipeline {
     agent any
-
-    environment {
-        // Direct internal gateway routing bypassing DNS completely
-        LOCALSTACK_ENDPOINT   = 'http://172.22.0.1:4566'
-        BUCKET_NAME           = 'react-app-bucket'
-    }
-
+    
     stages {
-        stage('Verify Downloaded Assets') {
+        stage('Checkout') {
             steps {
-                echo 'Checking compiled distribution assets...'
-                sh 'ls -la ./dist'
+                checkout scm
             }
         }
-
-        stage('Deploy to Infrastructure') {
+        
+        stage('Build Docker Image') {
             steps {
-                echo "Deploying production assets directly to LocalStack S3 bucket via REST API..."
-                sh """
-                    # 1. Create the bucket using a standard HTTP PUT request
-                    curl -X PUT "${LOCALSTACK_ENDPOINT}/${BUCKET_NAME}" || echo "Bucket initialization processed."
-
-                    # 2. Upload index.html
-                    curl -X PUT -T ./dist/index.html "${LOCALSTACK_ENDPOINT}/${BUCKET_NAME}/index.html" -H "Content-Type: text/html"
-
-                    # 3. Upload icons and svgs
-                    curl -X PUT -T ./dist/favicon.svg "${LOCALSTACK_ENDPOINT}/${BUCKET_NAME}/favicon.svg" -H "Content-Type: image/svg+xml"
-                    curl -X PUT -T ./dist/icons.svg "${LOCALSTACK_ENDPOINT}/${BUCKET_NAME}/icons.svg" -H "Content-Type: image/svg+xml"
-
-                    # 4. Upload build assets inside the assets directory dynamically
-                    if [ -d "./dist/assets" ]; then
-                        for file in ./dist/assets/*; do
-                            filename=\$(basename "\$file")
-                            echo "Uploading asset: \$filename"
-                            curl -X PUT -T "\$file" "${LOCALSTACK_ENDPOINT}/${BUCKET_NAME}/assets/\$filename"
-                        done
-                    fi
-                """
+                // Build the image using the Dockerfile we perfected
+                sh 'docker build -t my-react-app:latest .'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                // Stop and remove the existing container if it exists
+                sh 'docker rm -f my-running-app || true'
+                
+                // Start the new container
+                sh 'docker run -d -p 8081:80 --name my-running-app my-react-app:latest'
             }
         }
     }
