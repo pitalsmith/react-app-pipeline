@@ -4,28 +4,39 @@ pipeline {
     environment {
         LOCALSTACK_ENDPOINT   = 'http://172.19.171.143:4566'
         BUCKET_NAME           = 'react-app-bucket'
-        AWS_DEFAULT_REGION    = 'us-east-1'
-        AWS_ACCESS_KEY_ID     = 'mock-key'
-        AWS_SECRET_ACCESS_KEY = 'mock-secret'
     }
 
     stages {
         stage('Verify Downloaded Assets') {
             steps {
-                echo 'Checking compiled distribution assets from GitHub repository...'
+                echo 'Checking compiled distribution assets...'
                 sh 'ls -la ./dist'
             }
         }
 
         stage('Deploy to Infrastructure') {
             steps {
-                echo "Deploying production build assets directly to LocalStack S3 at ${LOCALSTACK_ENDPOINT}..."
-                
-                // Ensure target bucket exists inside LocalStack instance
-                sh "aws --endpoint-url=${LOCALSTACK_ENDPOINT} s3 mb s3://${BUCKET_NAME} --region ${AWS_DEFAULT_REGION} || echo 'Bucket exists.'"
-                
-                // Sync static assets
-                sh "aws --endpoint-url=${LOCALSTACK_ENDPOINT} s3 sync ./dist s3://${BUCKET_NAME} --delete"
+                echo "Deploying production assets directly to LocalStack S3 bucket via REST API..."
+                sh """
+                    # 1. Create the bucket using a standard HTTP PUT request
+                    curl -X PUT "${LOCALSTACK_ENDPOINT}/${BUCKET_NAME}" || echo "Bucket initialization processed."
+
+                    # 2. Upload index.html
+                    curl -X PUT -T ./dist/index.html "${LOCALSTACK_ENDPOINT}/${BUCKET_NAME}/index.html" -H "Content-Type: text/html"
+
+                    # 3. Upload icons and svgs
+                    curl -X PUT -T ./dist/favicon.svg "${LOCALSTACK_ENDPOINT}/${BUCKET_NAME}/favicon.svg" -H "Content-Type: image/svg+xml"
+                    curl -X PUT -T ./dist/icons.svg "${LOCALSTACK_ENDPOINT}/${BUCKET_NAME}/icons.svg" -H "Content-Type: image/svg+xml"
+
+                    # 4. Upload build assets inside the assets directory dynamically
+                    if [ -d "./dist/assets" ]; then
+                        for file in ./dist/assets/*; do
+                            filename=\$(basename "\$file")
+                            echo "Uploading asset: \$filename"
+                            curl -X PUT -T "\$file" "${LOCALSTACK_ENDPOINT}/${BUCKET_NAME}/assets/\$filename"
+                        done
+                    fi
+                """
             }
         }
     }
