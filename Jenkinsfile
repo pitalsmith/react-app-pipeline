@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // This special DNS name forces Jenkins to look outside itself and hit your local machine directly
-        LOCALSTACK_ENDPOINT   = 'http://host.docker.internal:4566'
+        LOCALSTACK_ENDPOINT   = 'http://172.19.171.143:4566'
         BUCKET_NAME           = 'react-app-bucket'
     }
 
